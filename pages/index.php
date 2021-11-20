@@ -1,8 +1,3 @@
-<?php
-
-    global $conn;
-
-?>
 <section>
     <div class="container">
         <input type="text" placeholder="Zoeken...">
