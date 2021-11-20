@@ -5,6 +5,7 @@
     use RMJTromp\exceptions\IllegalStateException;
     use RMJTromp\exceptions\MySQLException;
     use RMJTromp\RMJTromp;
+    use RMJTromp\utilities\JSON;
     use function RMJTromp\apiRespond;
 
     require_once "RMJTromp/core/Client.php";
@@ -73,7 +74,13 @@
 
                         apiRespond([
                             "success" => true,
-                            "response" => "Client succesvol bewerkt"
+                            "response" => [
+                                "id" => $client->getId(),
+                                "name" => $client->getName(),
+                                "address" => $client->getAddress(),
+                                "postcode" => $client->getPostCode(),
+                                "location" => $client->getLocation()
+                            ]
                         ]);
                     } catch (Exception $e) {
                         apiRespond([

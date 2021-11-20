@@ -1,15 +1,24 @@
+interface ClientData {
+    id?: number,
+    name?: string,
+    address?: string,
+    postcode?: string,
+    location?: string
+}
+
 class Client extends EventEmitter {
 
-    /** @type {Client[]} */
-    static cache = [];
+    private static cache : Client[] = [];
+    private readonly id: number;
+    private name: string;
+    private address: string;
+    private postcode: string;
+    private location: string;
 
-    /**
-     * @param {number} id
-     * @returns {Promise<Client>}
-     */
-    static get(id) {
+    static get(id : number) : Promise<Client> {
         return new Promise((resolve, reject) => {
             if(typeof id !== "number" || id < 1) reject("Ongeldige client ID opgegeven.");
+            /**@ts-ignore*/
             let client = Client.cache.find(client => client.getId() === id);
             if(client) resolve(client);
             else {
@@ -21,6 +30,11 @@ class Client extends EventEmitter {
                             if(response.success) resolve(new Client(response.response));
                             else reject(response.response);
                         } catch (e) {
+                            if(e instanceof SyntaxError) {
+                                let div = $("<div>");
+                                div.innerHTML = xhttp.responseText;
+                                console.error("Response: ", div.innerText);
+                            }
                             reject("Er is een fout opgetreden bij het ophalen van klantinformatie.");
                             console.error(e);
                         }
@@ -33,12 +47,7 @@ class Client extends EventEmitter {
         });
     }
 
-    /**
-     * @param {number} offset = 0
-     * @param {number} limit = 100
-     * @returns {Promise<Client[]>}
-     */
-    static getClientsList(offset = 0, limit = 100) {
+    public static getClientsList(offset : number = 0, limit : number = 100) : Promise<Client[]> {
         return new Promise((resolve, reject) => {
             let xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
@@ -50,6 +59,11 @@ class Client extends EventEmitter {
                             resolve([...clients].map(data => new Client(data)));
                         } else reject(response.response);
                     } catch (e) {
+                        if(e instanceof SyntaxError) {
+                            let div = $("<div>");
+                            div.innerHTML = xhttp.responseText;
+                            console.error("Response: ", div.innerText);
+                        }
                         reject("Er is een fout opgetreden bij het ophalen van de klantenlijst.");
                         console.error(e);
                     }
@@ -61,35 +75,27 @@ class Client extends EventEmitter {
         });
     }
 
-    /**
-     * @param {Object} data
-     * @param {string} data.name
-     * @param {string} data.address
-     * @param {string} data.postcode
-     * @param {string} data.location
-     * @returns {Promise<Client>}
-     */
-    static createClient(data) {
+    public static createClient(data : ClientData): Promise<Client> {
         return new Promise((resolve, reject) => {
             const formdata = new FormData();
 
             if(data.name) {
-                if(typeof data.name !== "string" || !/^[\p{L}\- ]{2,}$/u.test(data.name.trim())) return reject("Ongeldige naam opgegeven.");
+                if(!/^[\p{L}\- ]{2,}$/u.test(data.name.trim())) return reject("Ongeldige naam opgegeven.");
                 formdata.set("name", data.name.trim())
             } else return reject("Er werd geen naam opgegeven");
 
             if(data.address) {
-                if(typeof data.address !== "string" || !/^[\p{L}\p{N}\- ]{2,}$/u.test(data.address.trim())) return reject("Ongeldige adres opgegeven.");
+                if(!/^[\p{L}\p{N}\- ]{2,}$/u.test(data.address.trim())) return reject("Ongeldige adres opgegeven.");
                 formdata.set("address", data.address.trim())
             } else return reject("Er werd geen adres opgegeven");
 
             if(data.postcode) {
-                if(typeof data.postcode !== "string" || !/^\d{4}[a-z]{2}$/i.test(data.postcode.trim())) return reject("Ongeldige postcode opgegeven.");
+                if(!/^\d{4}[a-z]{2}$/i.test(data.postcode.trim())) return reject("Ongeldige postcode opgegeven.");
                 formdata.set("postcode", data.postcode.trim())
             } else return reject("Er werd geen postcode opgegeven");
 
             if(data.location) {
-                if(typeof data.location !== "string" || !/^[\p{L} \-'.]+$/u.test(data.location.trim())) return reject("Ongeldige plaats opgegeven.");
+                if(!/^[\p{L} \-'.]+$/u.test(data.location.trim())) return reject("Ongeldige plaats opgegeven.");
                 formdata.set("location", data.location.trim())
             } else return reject("Er werd geen plaats opgegeven");
 
@@ -102,6 +108,11 @@ class Client extends EventEmitter {
                         if(response.success) resolve(new Client(response.response));
                         else reject(response.response);
                     } catch (e) {
+                        if(e instanceof SyntaxError) {
+                            let div = $("<div>");
+                            div.innerHTML = xhttp.responseText;
+                            console.error("Response: ", div.innerText);
+                        }
                         reject("Er is een fout opgetreden tijdens het aanmaken van een nieuwe klant.");
                         console.error(e);
                     }
@@ -113,14 +124,7 @@ class Client extends EventEmitter {
         });
     }
 
-    /**
-     * @param {Object} data
-     * @param {string} data.name
-     * @param {string} data.address
-     * @param {string} data.postcode
-     * @param {string} data.location
-     */
-    constructor(data) {
+    private constructor(data : ClientData) {
         super();
         this.id = data.id;
         this.name = data.name;
@@ -131,93 +135,74 @@ class Client extends EventEmitter {
         Client.cache.push(this);
     }
 
-    /** @returns {string} */
-    getId() {
+    public getId() : number {
         return this.id;
     }
 
-    /** @returns {string} */
-    getName() {
+    public getName() : string {
         return this.name;
     }
 
-    /**
-     * @param {string} name
-     * @returns {Promise<Client>}
-     */
-    setName(name) {
+    public setName(name) : Promise<Client> {
         return this.updateData({name});
     }
 
-    /** @returns {string} */
-    getAddress() {
+    public getAddress() : string {
         return this.address;
     }
 
-    /**
-     * @param {string} address
-     * @returns {Promise<Client>}
-     */
-    setAddress(address) {
+    public setAddress(address) : Promise<Client> {
         return this.updateData({address});
     }
 
-    /** @returns {string} */
-    getPostcode() {
+    public getPostcode() : string {
         return this.postcode;
     }
 
-    /**
-     * @param {string} postcode
-     * @returns {Promise<Client>}
-     */
-    setPostcode(postcode) {
+    public setPostcode(postcode) : Promise<Client> {
         return this.updateData({postcode});
     }
 
-    /** @returns {string} */
-    getLocation() {
+    public getLocation() : string {
         return this.location;
     }
 
-    /**
-     * @param {string} location
-     * @returns {Promise<Client>}
-     */
-    setLocation(location) {
+    public setLocation(location) : Promise<Client> {
         return this.updateData({location});
     }
 
-    /**
-     * @param {Object} data
-     * @param {string} [data.name]
-     * @param {string} [data.address]
-     * @param {string} [data.postcode]
-     * @param {string} [data.location]
-     * @returns {Promise<Client>}
-     */
-    updateData(data) {
+    public getClientData() : ClientData {
+        return {
+            id: this.id,
+            name: this.name,
+            address: this.address,
+            postcode: this.postcode,
+            location: this.location
+        }
+    }
+
+    public updateData(data : ClientData) : Promise<Client> {
         return new Promise((resolve, reject) => {
             let changes = {};
 
             if(data.name) {
-                if(typeof data.name !== "string" || !/^[\p{L}\- ]{2,}$/u.test(data.name.trim())) return reject("Ongeldige naam opgegeven.");
-                changes.name = data.name.trim();
+                if(!/^[\p{L}\- ]{2,}$/u.test(data.name.trim())) return reject("Ongeldige naam opgegeven.");
+                changes['name'] = data.name.trim();
             }
 
             if(data.address) {
-                if(typeof data.address !== "string" || !/^[\p{L}\p{N}\- ]{2,}$/u.test(data.address.trim())) return reject("Ongeldige adres opgegeven.");
-                changes.address = data.address.trim();
+                if(!/^[\p{L}\p{N}\- ]{2,}$/u.test(data.address.trim())) return reject("Ongeldige adres opgegeven.");
+                changes['address'] = data.address.trim();
             }
 
             if(data.postcode) {
-                if(typeof data.postcode !== "string" || !/^\d{4}[a-z]{2}$/i.test(data.postcode.trim())) return reject("Ongeldige postcode opgegeven.");
-                changes.postcode = data.postcode.trim();
+                if(!/^[1-9][0-9]{3}(?!sa|sd|ss)[a-z]{2}$/i.test(data.postcode.trim())) return reject("Ongeldige postcode opgegeven.");
+                changes['postcode'] = data.postcode.trim();
             }
 
             if(data.location) {
-                if(typeof data.location !== "string" || !/^[\p{L} \-'.]+$/u.test(data.location.trim())) return reject("Ongeldige plaats opgegeven.");
-                changes.location = data.location.trim();
+                if(!/^[\p{L} \-'.]+$/u.test(data.location.trim())) return reject("Ongeldige plaats opgegeven.");
+                changes['location'] = data.location.trim();
             }
 
 
@@ -228,24 +213,35 @@ class Client extends EventEmitter {
                         try {
                             const response = JSON.parse(xhttp.responseText);
                             if(response.success) {
+                                const client : ClientData = response.response;
+                                this.name = client.name;
+                                this.address = client.address;
+                                this.postcode = client.postcode;
+                                this.location = client.location;
+
                                 resolve(this);
                                 this.emit("update")
                             } else reject(response.response);
                         } catch (e) {
+                            if(e instanceof SyntaxError) {
+                                let div = $("<div>");
+                                div.innerHTML = xhttp.responseText;
+                                console.error("Response: ", div.innerText);
+                            }
                             reject("Er is een fout opgetreden tijdens het wijzigen van de klant.");
                             console.error(e);
                         }
                     }
                 };
                 xhttp.open("PUT", `/api/klant?id=${this.id}`, true);
+                xhttp.setRequestHeader("Content-Type", "application/json")
                 xhttp.send(JSON.stringify(changes));
                 setTimeout(() => reject("Timed Out"), 10000);
             } else resolve(this);
         });
     }
 
-    /** @returns {Promise<Client>} */
-    delete() {
+    delete() : Promise<Client> {
         return new Promise((resolve, reject) => {
             let xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = () => {
@@ -258,6 +254,7 @@ class Client extends EventEmitter {
                             this.emit("delete");
                         } else reject(response.response);
                     } catch (e) {
+
                         reject("Er is een fout opgetreden tijdens het verwijderen van de client");
                     }
                 }

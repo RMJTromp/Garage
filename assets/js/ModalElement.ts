@@ -1,9 +1,9 @@
 class ModalElement extends HTMLElement {
 
-    closeable = true;
-    removeFromDomOnClose = false;
+    private closeable = true;
+    private readonly removeFromDomOnClose;
 
-    constructor(removeFromDomOnClose = false) {
+    constructor(removeFromDomOnClose : boolean = false) {
         super();
         this.attachShadow({mode: 'open'});
         this.shadowRoot.innerHTML = `
@@ -22,7 +22,8 @@ class ModalElement extends HTMLElement {
             <slot></slot>
         `;
 
-        let startElement = null;
+        this.removeFromDomOnClose = removeFromDomOnClose;
+        let startElement : EventTarget = null;
         this.addEventListener("mousedown", (e) => {
             startElement = e.target;
         });
@@ -43,7 +44,7 @@ class ModalElement extends HTMLElement {
         });
     }
 
-    isOpen() {
+    isOpen() : boolean {
         return document.body.contains(this) && this.style.display !== "none";
     }
 
@@ -61,11 +62,11 @@ class ModalElement extends HTMLElement {
         this.dispatchEvent(new Event("close"));
     }
 
-    isCloseable() {
+    isCloseable() : boolean {
         return this.closeable;
     }
 
-    setCloseable(toggle) {
+    setCloseable(toggle : boolean) {
         this.closeable = typeof toggle === "boolean" ? toggle : this.closeable;
     }
 

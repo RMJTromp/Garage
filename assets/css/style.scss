@@ -28,6 +28,12 @@ input[type="text"] {
   padding: 11px 16px;
   border-radius: 8px;
   margin-bottom: 10px;
+  border-bottom: 2px solid transparent;
+  transition: border-bottom-color ease-in-out .1s;
+
+  &.error {
+    border-bottom-color: rgba(237, 66, 69, .8);
+  }
 
   &::placeholder {
     color: #4f5660;
@@ -109,11 +115,10 @@ body {
   background-color: white;
 
   > div.notice {
+    display: block;
     font-weight: 500;
     text-align: center;
-    position: relative;
     padding: 0 4px;
-    z-index: 101;
     flex-shrink: 0;
     -webkit-box-flex: 0;
     flex-grow: 0;
@@ -121,12 +126,29 @@ body {
     background-color: #f2f3f5;
     color: black;
     line-height: 36px;
-    display: block;
     font-size: 14px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    transform: translateY(-100%);
+    transition: transform ease-in-out .2s;
+    z-index: 10000;
 
     &:is(.primary,.success,.danger,.warning,.info) {
       color: white;
       background-color: rgb(var(--color));
+
+      > a {
+        border: 1px solid #FFFFFF40;
+        color: white;
+
+        &:hover {
+          border-color: white;
+          background-color: white;
+          color: rgba(var(--color));
+        }
+      }
     }
 
     > i {
@@ -159,6 +181,7 @@ body {
       transition: background-color .2s ease,color .2s ease,border-color .2s ease;
       background-color: transparent;
       font-size: 14px;
+      cursor: pointer;
 
       &:hover {
         border-color: black;
@@ -166,7 +189,7 @@ body {
         color: white;
       }
 
-      &:is(.primary,.success,.danger,.warning,.info) {
+      &.primary, &.success, &.danger, &.warning, &.info {
         border: 1px solid #FFFFFF40;
         color: white;
 
@@ -174,10 +197,6 @@ body {
           border-color: white;
           background-color: white;
           color: rgba(var(--color));
-        }
-
-        > i {
-          background-color: white;
         }
       }
     }
@@ -248,7 +267,7 @@ body {
             }
           }
 
-          > div {
+          > div:first-of-type {
             cursor: pointer;
             border-radius: 8px;
             padding: 16px 10px;
@@ -289,6 +308,10 @@ body {
               }
             }
           }
+
+          > div:nth-of-type(2) {
+            background-color: red;
+          }
         }
       }
     }
@@ -307,6 +330,12 @@ x-modal {
     width: fit-content;
     border-radius: 12px;
 
+    > header {
+      margin-bottom: 20px;
+      display: grid;
+      justify-content: right;
+    }
+
     > main {
       > input[type="text"] {
         &:nth-of-type(1) {
@@ -320,11 +349,50 @@ x-modal {
         &:nth-of-type(3) {
           width: 60px;
           display: inline-block;
+          text-transform: uppercase;
+
+          &::placeholder {
+            text-transform: none;
+          }
+        }
+      }
+
+      > div.formgroup {
+        display: inline-block;
+        margin-left: 10px;
+        position: relative;
+
+        > :first-child {
+          border-radius: unset;
+          border-top-left-radius: 8px;
+          border-top-right-radius: 8px;
         }
 
-        &:nth-of-type(4) {
-          display: inline-block;
-          margin-left: 10px;
+        > :last-child {
+          border-bottom-left-radius: 8px;
+          border-bottom-right-radius: 8px;
+        }
+
+        > ul {
+          width: 100%;
+          position: absolute;
+          display: block;
+          background-color: #fbfbfb;
+          top: 37px;
+          padding: 2px 0;
+
+          > li {
+            padding: 8px 10px;
+            cursor: pointer;
+
+            &:last-of-type {
+              border-radius: 0 0 8px 8px;
+            }
+
+            &:hover,&:focus,&.active {
+              background-color: #ebedef;
+            }
+          }
         }
       }
     }
@@ -350,4 +418,56 @@ x-modal {
     margin: 20px;
     cursor: pointer;
   }
+}
+// this is the stuff you want.
+
+.nummerplaat {
+  background: linear-gradient(to bottom, #f8d038 0%,#f5ca2e 100%);
+  padding: .125em .5em .125em 1.2em;
+  font-weight: bold;
+  font-size: 2.5em;
+  border-radius: 5px;
+  border: 1px solid #000;
+  box-shadow: 1px 1px 1px #ddd;
+  position: relative;
+  font-family: helvetica, ariel, sans-serif;
+  text-transform: uppercase;
+
+  &:before {
+    content: 'NL';
+    display: block;
+    width: 30px;
+    height: 100%;
+    background: #063298;
+    position: absolute;
+    top: 0;
+    border-radius: 4px 0 0 4px;
+    color: white;
+    font-size: .3em;
+    text-align: center;
+    line-height: 85px;
+    padding: 0 2px;
+    left: 0;
+  }
+
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 7px;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+    border-radius: 30px;
+    border: 1px dashed #f8d038;
+  }
+}
+
+.anim-rotate {
+  animation: rotating 2s linear infinite;
+}
+
+@keyframes rotating {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

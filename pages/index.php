@@ -3,7 +3,6 @@
     global $conn;
 
 ?>
-<div class="notice danger">Hello <i class="codicon codicon-close"></i></div>
 <section>
     <div class="container">
         <input type="text" placeholder="Zoeken...">

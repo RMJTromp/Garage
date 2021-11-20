@@ -32,7 +32,7 @@
 
     $title = "Garage";
     $stylesheets = ["/assets/css/style.min.css"];
-    $scripts = ["/assets/js/script.min.js", "/assets/js/modal.min.js", "/assets/js/EventEmitter.min.js", "/assets/js/Client.min.js"];
+    $scripts = ["https://cdn.jsdelivr.net/npm/fuse.js@6.4.6", "/assets/js/script.js", "/assets/js/ModalElement.js", "/assets/js/EventEmitter.js", "/assets/js/Client.js"];
 
     $header = new File("frame/header.php");
     $footer = new File("frame/footer.php");
