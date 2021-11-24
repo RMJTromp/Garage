@@ -6,7 +6,8 @@
   font-family: "codicon";
   src: url("../fonts/codicon.ttf?031e23fc0fbd87bdf9706044fa9ee2bd") format("truetype");
 }
-.codicon[class*=codicon-] {
+
+.codicon[class*='codicon-'] {
   font: normal normal normal 16px/1 codicon;
   display: block;
   text-decoration: none;
@@ -14,7 +15,8 @@
   text-align: center;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  user-select: none;
+  -moz-user-select: none;
+       user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
 }
@@ -1926,5 +1928,4 @@
 .codicon-newline:before {
   content: "\ebea";
 }
-
 /*# sourceMappingURL=codicon.css.map */

@@ -8,18 +8,18 @@ interface ClientData {
 
 class Client extends EventEmitter {
 
-    private static cache : Client[] = [];
     private readonly id: number;
     private name: string;
     private address: string;
     private postcode: string;
     private location: string;
+    public readonly listElement;
 
     static get(id : number) : Promise<Client> {
         return new Promise((resolve, reject) => {
             if(typeof id !== "number" || id < 1) reject("Ongeldige client ID opgegeven.");
-            /**@ts-ignore*/
-            let client = Client.cache.find(client => client.getId() === id);
+            // @ts-ignore
+            let client = RMJTromp.garage.clients.cache.find(client => client.getId() === id);
             if(client) resolve(client);
             else {
                 let xhttp = new XMLHttpRequest();
@@ -132,7 +132,8 @@ class Client extends EventEmitter {
         this.postcode = data.postcode;
         this.location = data.location;
 
-        Client.cache.push(this);
+        RMJTromp.garage.clients.cache.push(this);
+        this.listElement = RMJTromp.garage.clients.createElement(this);
     }
 
     public getId() : number {
@@ -249,7 +250,8 @@ class Client extends EventEmitter {
                     try {
                         const response = JSON.parse(xhttp.responseText);
                         if(response.success) {
-                            Client.cache = Client.cache.filter(client => client.getId() !== this.id);
+                            const index = RMJTromp.garage.clients.cache.indexOf(this);
+                            if(index !== -1) RMJTromp.garage.clients.cache.slice(index, 1);
                             resolve(this);
                             this.emit("delete");
                         } else reject(response.response);

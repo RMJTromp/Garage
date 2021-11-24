@@ -1,15 +1,28 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
-@import "codicon.css";
 
-.primary { --color: 88, 101, 242; }
-.success { --color: 59, 165, 93; }
-.danger { --color: 237, 66, 69; }
-.warning { --color: 250, 168, 26; }
-.info { --color: 79, 84, 92; }
+.primary { --r: 88; --g: 101; --b: 242; --color: rgb(var(--r), var(--g), var(--b)) }
+.success { --r: 59; --g: 165; --b: 93; --color: rgb(var(--r), var(--g), var(--b)) }
+.danger { --r: 237; --g: 66; --b: 69; --color: rgb(var(--r), var(--g), var(--b)) }
+.warning { --r: 250; --g: 168; --b: 26; --color: rgb(var(--r), var(--g), var(--b)) }
+.info { --r: 79; --b: 84; --b: 92; --color: rgb(var(--r), var(--g), var(--b)) }
 
 * {
   margin: 0;
   padding: 0;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #f2f3f5;
+    border-radius: 4px;
+  }
+  &:hover::-webkit-scrollbar-thumb {
+    background: #d1d1d1;
+  }
+  &:hover::-webkit-scrollbar-thumb:hover {
+    background: #bbbbbb;
+  }
 }
 
 ul {
@@ -65,7 +78,7 @@ button {
   &.block {
     display: block;
     width: 100%;
-    width: -webkit-fill-available;
+    width: stretch;
   }
 
   &:hover:not(:disabled) {
@@ -90,17 +103,17 @@ button {
 
   &:is(.primary,.success,.danger,.warning,.info) {
     color: white;
-    background-color: rgb(var(--color));
-    &:hover:not(:disabled) { background-color: rgb(var(--color), .85); text-decoration: none; }
-    &:active { background-color: rgb(var(--color), .7); }
+    background-color: var(--color);
+    &:hover:not(:disabled) { background-color: rgba(var(--r), var(--g), var(--b), .85); text-decoration: none; }
+    &:active { background-color: rgba(var(--r), var(--g), var(--b), .7); }
 
     &.outlined {
-      color: rgb(var(--color));
-      border: 1px solid rgb(var(--color), .3);
+      color: var(--color);
+      border: 1px solid rgba(var(--r), var(--g), var(--b), .3);
       background-color: transparent;
 
-      &:hover { border-color: rgb(var(--color), .3); color: white; }
-      &:active { background-color: rgb(var(--color), .1); border-color: rgb(var(--color)); }
+      &:hover { border-color: rgba(var(--r), var(--g), var(--b), .3); color: white; }
+      &:active { background-color: rgba(var(--r), var(--g), var(--b), .1); border-color: var(--color); }
     }
   }
 
@@ -113,6 +126,7 @@ button {
 body {
   font-family: "Roboto", sans-serif;
   background-color: white;
+  user-select: none;
 
   > div.notice {
     display: block;
@@ -137,7 +151,7 @@ body {
 
     &:is(.primary,.success,.danger,.warning,.info) {
       color: white;
-      background-color: rgb(var(--color));
+      background-color: var(--color);
 
       > a {
         border: 1px solid #FFFFFF40;
@@ -146,7 +160,7 @@ body {
         &:hover {
           border-color: white;
           background-color: white;
-          color: rgba(var(--color));
+          color: var(--color);
         }
       }
     }
@@ -196,7 +210,7 @@ body {
         &:hover {
           border-color: white;
           background-color: white;
-          color: rgba(var(--color));
+          color: var(--color);
         }
       }
     }
@@ -211,7 +225,7 @@ body {
       margin: 20px;
       max-width: 800px;
       position: relative;
-      width: -webkit-fill-available;
+      width: stretch;
 
       > input[type="text"] {
         width: inherit;
@@ -233,7 +247,12 @@ body {
           border-radius: 8px;
           position: relative;
 
-          &:hover {
+          &:first-of-type {
+            opacity: .3;
+            cursor: default;
+          }
+
+          &:hover:not(:first-of-type) {
             background-color: #e3e5e8;
 
             &:last-of-type {
@@ -253,6 +272,8 @@ body {
 
       > ul:nth-of-type(2) {
         margin: 0 auto;
+        max-height: calc(100vh - 205px);
+        overflow-y: auto;
 
         > li {
           &:not(:first-of-type) {
@@ -268,7 +289,6 @@ body {
           }
 
           > div:first-of-type {
-            cursor: pointer;
             border-radius: 8px;
             padding: 16px 10px;
             display: flex;
@@ -281,6 +301,7 @@ body {
 
             > ul {
               > li {
+                cursor: pointer;
                 display: inline-block;
                 background-color: #f2f3f5;
                 color: #4f5660;
@@ -318,7 +339,7 @@ body {
   }
 }
 
-x-modal {
+x-modal, client-editor-modal {
   > div.container {
     max-width: 1200px;
     position: absolute;
